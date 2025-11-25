@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: dotnet-api-demo
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=development
+      - connectionsStrings__DefaultConnection=Host=db;Port=5432;Database=demo;Username=Demo;Password=demo
+    depends_on:
+      - db
+    restart: unless-stopped
+  db:
+    image: postgres:16
+    container_name: postgres-demo
+    environment:
+      - POSTGRES_DB=demo
+      - POSTGRES_USER=demo
+      - POSTGRES_PASSWORD=demo
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+   dbdata:
